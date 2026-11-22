@@ -1,4 +1,4 @@
-# Frequency-guided adaptive computation for efficient single-image super-resolution
+# Frequency-guided adaptive computation for efficient single-image super-resolution （Pattern Recognition 2026）
 ---
 [[arXiv](https://arxiv.org/abs/2505.06975)] [[PDF](https://arxiv.org/pdf/2505.06975)]
 
