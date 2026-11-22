@@ -1,0 +1,72 @@
+{
+  "task": "carn_dyconv_v1_mask_new_progress"
+  , "model": "pixelwise_sr_mask_progress"
+  , "gpu_ids": [5]   //
+  , "dist": true
+
+  , "scale": 1       // broadcast to "netG"
+  , "n_channels": 3  // broadcast to "datasets", 1 for grayscale, 3 for color
+
+  , "path": {
+    "root": "/data1/shangwei/Pixelwise_SR_experiments++"
+    , "images": "/data1/shangwei/Pixelwise_SR_experiments++/results"
+    , "pretrained_netG": null  
+    , "pretrained_netE": null
+  }
+
+  , "datasets": {
+    "train": {
+      "name": "train_dataset"           //  just name
+      , "data_root": "/data1/shangwei/dataset/DIV2K/DIV2K_train_HR_Aug_sub256/"  //  path of H training dataset
+      , "patch_size": 64  //32     //  256     //  patch size 40 | 64 | 96 | 128 | 192
+      , "dataloader_shuffle": true
+      , "dataloader_num_workers": 8
+      , "dataloader_batch_size": 16    //  batch size 1 | 16 | 32 | 48 | 64 | 128
+      , "no_augment": false
+      , "n_colors": 3
+    }
+    , "test": {
+      "name": "test_dataset"            // just name
+      , "data_root": "/data1/shangwei/dataset/DIV2K/test/test2k/"  // path of H training dataset    //
+      , "n_colors": 3
+    }
+  }
+
+  , "netG": {
+    "net_type": "CARN_dyconv_v1_mask_new"
+  }
+
+  , "train": {
+    "G_lossfn_type": "1*L1" // "1*Charbonnier" //"1*L1|1e-1*Perceptual"  //"1*Charbonnier|1e-1*ADIS"   //  //"1*Charbonnier|1e-1*Perceptual"       //,
+
+    , "E_decay": 0                  // Exponential Moving Average for netG: set 0 to disable; default setting 0.999
+
+    , "G_optimizer_type": "adam"        // fixed, adam is enough
+    , "G_optimizer_lr": 5e-4   //2e-4         // learning rate
+    , "G_optimizer_wd": 0 //1e-4               // weight decay, default 0
+    , "G_optimizer_clipgrad": 0      // unused  G_optimizer_clipgrad
+    , "G_optimizer_reuse": false
+
+    , "total_iter": 2500000
+
+     , "G_scheduler_type": "CosineAnnealingLR_Restart" //"CosineAnnealingRestartCyclicLR"   //"CosineAnnealingWarmRestarts"  //
+     , "beta1": 0.9
+     , "beta2": 0.99
+     , "niter": 2500000
+     , "warmup_iter": -1   // no warm up
+     , "T_period": [500000, 1000000]
+     , "restarts": [500000]
+     , "restart_weights": [1]
+     , "eta_min": 5e-6
+
+    , "G_regularizer_orthstep": null    // unused
+    , "G_regularizer_clipstep": null    // unused
+
+    , "G_param_strict": false
+    , "E_param_strict": false
+
+    , "checkpoint_test": 20000          // for testings
+    , "checkpoint_save": 20000           // for saving model
+    , "checkpoint_print": 500         // for print
+  }
+}
